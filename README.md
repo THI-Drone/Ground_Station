@@ -3,7 +3,7 @@
 ![ground_station_logo](ground_station_logo.jpg)
 ![FFI24_drone_project_badge](FFI24_Drone_Project-badge.svg)
 
-This is the Ground-Station-Web-App intendet to be used together with the Ground-Station-ROS-Node. This webapp connects to the Ground-Station-ROS-Node via a UNIX socket. Webclients can access a webpage, where all log-messages received on the UNIX-socket get rendered.
+This is the Ground-Station-Web-App intended to be used together with the Ground-Station-ROS-Node. This webapp connects to the Ground-Station-ROS-Node via a UNIX socket. Webclients can access a webpage, where all log-messages received on the UNIX-socket get rendered.
 
 # Content
 
@@ -12,21 +12,21 @@ This is the Ground-Station-Web-App intendet to be used together with the Ground-
 
 # Functionality Overview
 
-This Ground-Station-Web-App serves drone-telemetry-logs to make them accessible for flighttest-crews in their own device's browsers. The backend is implemented using _Node.js_, while the frontend is developed using _React_ and _Vite_. As seen below, the intented deployment shall be using a UNIX-socket for receiving log-messages form a Ground-Telemetry-ROS-Node implemented seperatly. Preferable the _Docker_ shall be used for hosting this webapp, with the UNIX-socket mounted into the countainer.
+This Ground-Station-Web-App serves drone-telemetry-logs to make them accessible for flighttest-crews in their own device's browsers. The backend is implemented using _Node.js_, while the frontend is developed using _React_ and _Vite_. As seen below, the intended deployment shall be using a UNIX-socket for receiving log-messages from a Ground-Telemetry-ROS-Node implemented separately. Preferably the _Docker_ shall be used for hosting this webapp, with the UNIX-socket mounted into the container.
 ![groundstation_system_design](ground_station_system_design.png)
 
 ## Accessing the Web-App from a browser
 
-After [installing](#installation) the Web-App clients can access the Web-App through the host. When accessing the site, the client-app connects to the backend's websocket and from there off receives all new log-messages send from the drone over the Ground-Telemetry-ROS-node. The log messages get printed in a CLI-like way with a preceeding time-stamp of log-receival on the client.
+After [installation](#installation) the Web-App clients can access the Web-App through the host. When accessing the site, the client-app connects to the backend's websocket and from there off receives all new log-messages sent from the drone over the Ground-Telemetry-ROS-node. The log messages get printed in a CLI-like way with a preceeding time-stamp of log-receival on the client.
 ![ground_station_browser_example](ground_station_browser_example.png)
-If the log-messages overflow the available space in the browser, the user can scroll throught the messages. When scrolling all the way down, the scroll logs onto the newest received message (from there off the scroll sticks down to newest received logs, until the user starts scrolling again).
+If the log-messages overflow the available space in the browser, the user can scroll through the messages. When scrolling all the way down, the scroll logs onto the newest received message (from there on the scroll sticks down to newest received logs, until the user starts scrolling again).
 When the user closes the browser-window, all log-messages on this client are lost. Only again new ones get displayed. Copying important logs before closing the window is advised. Export and similar functionallity may follow in next version.
 
 ## UNIX-Socket Message Format
 
 The received data from the UNIX-socket is expected to be **only utf8** encoded JSON in the following format:
 
-```json
+```typescript
 {
   "type": string,
   "content": string | object
@@ -44,7 +44,7 @@ The Ground-Station-Web-App is intended to be hosted in a _Docker-Container_. Oth
 After cloning the repository edit at least the [_.env-file_](#environment-variables) for the frontend, as the frontend gets to be build in the first stage of the docker-images building process.
 For building the image run the following command in the projects root:
 
-```
+```bash
 $ docker build -t <image_name e.g. ground_station> .
 ```
 
@@ -52,7 +52,7 @@ $ docker build -t <image_name e.g. ground_station> .
 
 After building a local image use for example the following command to run a container for the Ground-Station-Web-App:
 
-```
+```bash
 $ docker run -p <host_port>:<container_port> -v <host_path_to_unix_socket>:<container_path_to_unix_socket> <image_name e.g. ground_station>
 ```
 
@@ -81,7 +81,7 @@ There are two important environment-variable-scopes for this project: front-end 
 
 - `VITE_BACKEND` Host of the backend (example: _VITE_BACKEND=192.168.0.5:5000_, assuming the host's IP and port the Web-App is reachable under). This is needed as the front-end needs to connect to the backend's web-socket.
 
-The back-end environment-variables can be set either throght the file located under web/backend/.env or using any other ways for setting environment-variables in the final Web-App's container.
+The back-end environment-variables can be set either through the file located under web/backend/.env or using any other ways for setting environment-variables in the final Web-App's container.
 
 ### web/backend/.env
 

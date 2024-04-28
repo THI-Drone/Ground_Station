@@ -1,5 +1,5 @@
 """
-The goal of this script is to connect to an existing UNIX-socket an listen for everything.
+The goal of this script is to connect to an existing UNIX-socket and listen for everything.
 
 """
 

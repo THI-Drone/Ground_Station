@@ -18,14 +18,14 @@ DEFAULT_UNIX_SOCKET_PATH = "/tmp/thi_drone"
 
 def socket_exists(socket_path: str) -> bool:
     """
-    Checks rather if a socket-file already exists on the given path.
+    Checks if a socket-file already exists on the given path.
     """
     return os.path.exists(socket_path)
 
 
 def send_message_block(client_socket):
     """
-    Defines the message block to be continuosly send.
+    Defines the message block to be continuosly sent.
     """
     client_socket.sendall(
         json.dumps(tm.drone_ready()).encode())
@@ -42,6 +42,9 @@ def send_message_block(client_socket):
 
 
 def run_dummy_server(socket_path=DEFAULT_UNIX_SOCKET_PATH):
+    """
+    Runs a dummy sender-server on the defined UNIX-socket path. Continously sends different example messages.
+    """
     # Check if socket is in use
     if socket_exists(socket_path):
         raise FileExistsError("Socket file already exists.")
