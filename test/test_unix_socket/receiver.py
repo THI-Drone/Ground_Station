@@ -23,23 +23,18 @@ def run_dummy_listener(socket_path=DEFAULT_UNIX_SOCKET_PATH):
         client_socket.connect(socket_path)
         print("Connected to server.")
 
+        buffer = ""
         while True:
-            # Use select to wait until there is data to read on the socket
-            readable, _, _ = select.select([client_socket], [], [])
+            # Receive data from the server
+            buffer = buffer + client_socket.recv(1024).decode()
+            blocks = buffer.split(chr(23))
+            buffer = blocks.pop()
 
-            for sock in readable:
-                # Receive data from the server
-                received_data = sock.recv(1024)
-
-                # If no data is received, close the connection
-                if not received_data:
-                    print("No data received. Closing connection.")
-                    client_socket.close()
-                    exit()
-
-                # Decode the received data from bytes to JSON
-                json_data = json.loads(received_data.decode())
+            # Decode the received data from bytes to JSON
+            for elem in list(blocks):
+                json_data = json.loads(elem)
                 print("Received JSON data:", json_data)
+                blocks.remove(elem)
 
     except Exception as e:
         print("Error:", e)

@@ -28,17 +28,17 @@ def send_message_block(client_socket):
     Defines the message block to be continuosly send.
     """
     client_socket.sendall(
-        json.dumps(tm.drone_ready()).encode())
+        json.dumps(tm.drone_ready()).encode() + b"\x17")
     print("Send message.")
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, 3))
     client_socket.sendall(
-        json.dumps(tm.drone_position()).encode())
+        json.dumps(tm.drone_position()).encode() + b"\x17")
     print("Send message.")
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, 3))
     client_socket.sendall(
-        json.dumps(tm.scanned_qr_code()).encode())
+        json.dumps(tm.scanned_qr_code()).encode() + b"\x17")
     print("Send message.")
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, 3))
 
 
 def run_dummy_server(socket_path=DEFAULT_UNIX_SOCKET_PATH):
