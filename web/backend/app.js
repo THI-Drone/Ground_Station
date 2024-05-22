@@ -43,6 +43,5 @@ wss.on("request", async function (request) {
 
 // Broadcast all data received on the UNIX-socket to all web-socket clients
 UNIX_client_socket.on("data", (data) => {
-  console.log("Sending", data.toString(), "to all clients.");
   wss.broadcast(data);
 });
