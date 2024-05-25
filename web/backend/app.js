@@ -43,35 +43,40 @@ const startServer = async () => {
   const UNIX_SOCKET_PATH = process.env.UNIX_SOCKET_PATH || "/tmp/thi_drone";
   const CHECK_INTERVAL = 1000;
 
-  await waitForSocket(UNIX_SOCKET_PATH, CHECK_INTERVAL);
+  try {
+    await waitForSocket(UNIX_SOCKET_PATH, CHECK_INTERVAL);
 
-  console.log(`Socket ${UNIX_SOCKET_PATH} exists. Proceeding to connect...`);
+    console.log(`Socket ${UNIX_SOCKET_PATH} exists. Proceeding to connect...`);
 
-  // Connect to the UNIX-socket
-  const UNIX_client_socket = net.createConnection(UNIX_SOCKET_PATH);
+    // Connect to the UNIX-socket
+    const UNIX_client_socket = net.createConnection(UNIX_SOCKET_PATH);
 
-  // Start to listen with server
-  const port = process.env.PORT || 3000;
-  server.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+    // Start to listen with server
+    const port = process.env.PORT || 3000;
+    server.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
 
-  // Initiate web-socket on server
-  const wss = new websocket.server({
-    httpServer: server,
-    autoAcceptConnections: false,
-    keepaliveInterval: 5000,
-  });
+    // Initiate web-socket on server
+    const wss = new websocket.server({
+      httpServer: server,
+      autoAcceptConnections: false,
+      keepaliveInterval: 5000,
+    });
 
-  // Accept connections on "drone-logging"
-  wss.on("request", async function (request) {
-    request.accept("drone-logging", request.origin);
-  });
+    // Accept connections on "drone-logging"
+    wss.on("request", async function (request) {
+      request.accept("drone-logging", request.origin);
+    });
 
-  // Broadcast all data received on the UNIX-socket to all web-socket clients
-  UNIX_client_socket.on("data", (data) => {
-    wss.broadcast(data);
-  });
+    // Broadcast all data received on the UNIX-socket to all web-socket clients
+    UNIX_client_socket.on("data", (data) => {
+      wss.broadcast(data);
+    });
+  } catch (err) {
+    console.error(`Error in running the server: ${err.message}`);
+    setTimeout(startServer, 1500); // Retry after 1.5s
+  }
 };
 
 // Start the server
