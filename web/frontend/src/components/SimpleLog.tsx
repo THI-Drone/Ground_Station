@@ -21,7 +21,7 @@ export default function SimpleLog() {
   >([]);
   // Tracking received heartbeats
   const [receivedHeartbeats, setReceivedHeartbeats] = useState<
-    Record<string, { sender_id: string; tick: number; active: boolean; timestamp: number }>
+    Record<string, { sender_id: string; tick: number; active: boolean; timestamp: number; timestamp_received: number }>
   >({});
   // URL to backend, depending on using SSL
   const wsUrl = (location.protocol == "https:" ? "wss://" : "ws://") + BACKEND;
@@ -41,7 +41,10 @@ export default function SimpleLog() {
         const elemJson = JSON.parse(elem.replace("\x17", ""));
 
         if (elemJson["type"] && elemJson["type"] == "heartbeat") {
-          setReceivedHeartbeats((previousHeartbeats) => ({ ...previousHeartbeats, [elemJson.content["sender_id"]]: elemJson.content }));
+          setReceivedHeartbeats((previousHeartbeats) => ({
+            ...previousHeartbeats,
+            [elemJson.content["sender_id"]]: { ...elemJson.content, timestamp_received: Date.now() / 1000 },
+          }));
         } else if (elemJson["type"] && elemJson["type"] == "log") {
           if (!receivedLogNames.current.includes(elemJson.content.name)) {
             receivedLogNames.current.push(elemJson.content.name);
