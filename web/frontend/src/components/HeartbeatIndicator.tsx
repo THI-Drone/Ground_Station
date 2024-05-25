@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Component to display all received heartbeats, marking the active node and if they are considered alive (received heartbeat within the last 3s).
+ * @param {Record<string, { sender_id: string; tick: number; active: boolean; timestamp: number }>} receivedHeartbeats - Record containing the last heartbeats received in the network.
+ */
 export default function HeartbeatIndicator({
   receivedHeartbeats,
 }: {
   receivedHeartbeats: Record<string, { sender_id: string; tick: number; active: boolean; timestamp: number }>;
 }) {
+  // Tracking now to rerender every second
   const [now, setNow] = useState(Date.now() / 1000);
-  const maxTimeBetweenHeartbeats = 1.5;
+  // Defining the maximum time in seconds to pass between two subsequent heartbeats before the node is consideres unalive
+  const maxTimeBetweenHeartbeats = 3;
+
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now() / 1000), 1000);
     return () => {

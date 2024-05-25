@@ -61,7 +61,7 @@ export default function SimpleLog() {
     };
   }, []);
 
-  console.log(logNameFilter);
+  // Filter log messages according to filters
   const filteredLogs = receivedLogs.filter((elem) => {
     let filterMessage = false;
     logNameFilter.forEach((nameFilter) => {

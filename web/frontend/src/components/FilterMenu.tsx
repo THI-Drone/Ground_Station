@@ -2,6 +2,14 @@ import { useState } from "react";
 import MenuIcon from "../assets/menu.svg";
 import CloseIcon from "../assets/close.svg";
 
+/**
+ * Component to display a overlay for filtering nodes's log messages and their severity level.
+ * @param {Array<string>} receivedLogNames - Containing the names of all yet received node names.
+ * @param {Array<string>} logNameFilter - Array containing the names of all node names to be filtered out on display (not displayed).
+ * @param {Array<string>} logSeverityFilter - Array containing the severity level to be filtered out on display (not displayed).
+ * @param {Function} setLogNameFilter - setter for logNameFilter.
+ * @param {Function} setSeverityFilter - setter for setSeverityFilter.
+ */
 export default function FilterMenu({
   receivedLogNames,
   logNameFilter,
