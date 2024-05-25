@@ -28,17 +28,17 @@ def send_message_block(client_socket):
     Defines the message block to be continuosly sent.
     """
     client_socket.sendall(
-        json.dumps(tm.drone_ready()).encode())
+        json.dumps(tm.drone_ready()).encode() + b"\x17")
     print("Send message.")
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, 3))
     client_socket.sendall(
-        json.dumps(tm.drone_position()).encode())
+        json.dumps(tm.drone_position()).encode() + b"\x17")
     print("Send message.")
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, 3))
     client_socket.sendall(
-        json.dumps(tm.scanned_qr_code()).encode())
+        json.dumps(tm.scanned_qr_code()).encode() + b"\x17")
     print("Send message.")
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, 3))
 
 
 def run_dummy_server(socket_path=DEFAULT_UNIX_SOCKET_PATH):
@@ -69,8 +69,31 @@ def run_dummy_server(socket_path=DEFAULT_UNIX_SOCKET_PATH):
                     print("Connection accepted.")
 
                     try:
+                        i = 0
                         while True:
-                            send_message_block(client_socket)
+                            client_socket.sendall(
+                                json.dumps(tm.log_INFO()).encode() + b"\x17")
+                            client_socket.sendall(
+                                json.dumps(tm.log_WARN()).encode() + b"\x17")
+                            client_socket.sendall(
+                                json.dumps(tm.log_ERROR()).encode() + b"\x17")
+                            client_socket.sendall(
+                                json.dumps(tm.log_FATAL()).encode() + b"\x17")
+                            client_socket.sendall(
+                                json.dumps(tm.heartbeat_node1_active(i)).encode() + b"\x17")
+                            print("Send message.")
+                            i += 1
+                            time.sleep(1)
+                            client_socket.sendall(
+                                json.dumps(tm.heartbeat_node2(i, False)).encode() + b"\x17")
+                            print("Send message.")
+                            i += 1
+                            time.sleep(2)
+                            client_socket.sendall(
+                                json.dumps(tm.heartbeat_node2(i, True)).encode() + b"\x17")
+                            print("Send message.")
+                            i += 1
+                            time.sleep(3)
 
                     except Exception as e:
                         print("Error sendind data:", e)
