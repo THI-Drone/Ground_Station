@@ -51,6 +51,12 @@ const startServer = async () => {
     // Connect to the UNIX-socket
     const UNIX_client_socket = net.createConnection(UNIX_SOCKET_PATH);
 
+    // Add error handler to UNIX socket connection
+    UNIX_client_socket.on("error", (err) => {
+      console.error(`Error connecting to UNIX socket: ${err.message}`);
+      setTimeout(startServer, 1500); // Retry after 1.5s
+    });
+
     // Start to listen with server
     const port = process.env.PORT || 3000;
     server.listen(port, () => {
